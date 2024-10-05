@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, Date, Table
 from sqlalchemy.orm import relationship
-from .database import Base
+from database import Base
 
 # Many-to-Many relationship tables
 movie_languages = Table('movie_languages', Base.metadata,
