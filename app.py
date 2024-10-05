@@ -5,8 +5,18 @@ import tempfile
 import os
 from typing import Dict, Literal
 from datetime import datetime
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+from app.database import init_db
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Starting up...")
+    init_db() 
+    yield
+    print("Shutting down...")
+
+app = FastAPI(lifespan=lifespan)
 
 # Define the possible status types
 StatusType = Literal["uploading", "processing", "completed", "failed", "not found"]
