@@ -43,3 +43,6 @@ pip3 install -r requirements.txt
 ```bash
 python app/main.py
 ```
+
+#### To interact with the apis
+Open the browser and visit http://127.0.0.1:8000/docs
