@@ -57,8 +57,8 @@ def process_csv(file_path: str, task_id: str, db: Session):
                 # print(row)
                 count += 1
                 repository.create_movie(row)
-                if count > 100:
-                    break
+                # if count > 100:
+                #     break
 
             print(f'Processed {count} rows')
         task_manager.update_status(task_id, "completed", datetime.now().isoformat())
