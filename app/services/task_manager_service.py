@@ -26,3 +26,8 @@ class TaskManagerService:
                 self.task_status[task_id]["completed_time"] = completed_time
         else:
             raise ValueError(f"Task ID {task_id} not found")
+
+task_manager_service = TaskManagerService()
+
+def get_task_manager_service():
+    return task_manager_service

@@ -43,4 +43,12 @@ For scope of this project sticking with SQLite, while both MySQL & PostgreSQL ar
 2. DB Setup : 
 
     Now let's setup & initialise DB. For schema I'm thinking of using the csv header as it is. Later might come back and rethink about optimisation.
-    ToDo : Revisit the DB schema design.
+    
+    ~~ToDo : Revisit the DB schema design.~~
+
+    After taking the closer look at the csv, I noticed that a movie can be in multiple languages, then there are multiple entities like Genre, Production Companies etc. so splitting the data accordingly and establishing the relationship via foreign key.
+    For now not focusing much on the DB performance, will revisit and optimise it later.
+
+3. Get Data : 
+
+    A controller with all the required filters as query params.
