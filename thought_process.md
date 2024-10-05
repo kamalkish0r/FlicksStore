@@ -12,6 +12,8 @@ Your objective is to build a feature that allows the content team to upload movi
 
 
 ## Solution and Thought Process
+
+### DB Discussion 
 One of the major decisions perhaps the most important one, for this project is to decide a database since we are developing a data store which allows users to upload data via csv files and retrieve data in paginated manner, allowing user to filter by `year of release`, `language` and sort by `release date` and `ratings`.
 
 We need to optimse this system for faster reads and writes. I think we should have some fault tolerance mechanism to handle data loss while processing large csv files, maybe using a message queue before pushing to the db.
@@ -27,3 +29,13 @@ I'm more inclined towards using SQL databases due to following reasons :
 * To further optimse reads we can introduce cache layer 
 
 For scope of this project sticking with SQLite, while both MySQL & PostgreSQL are go to options when it comes to production. So if we have time then will migrate the db to PostgreSQL. SQLite is lightweight and ideal for rapid development.
+
+
+### API Design 
+
+1. User should be able to upload files 
+
+    When it comes to large files it's always better to process in chunks to prevent memory overflow leading to server kill.
+    One of the popular approach is to do client side handling to directly push the file to a cloud bucket(GCS, S3) and share the pre-signed url with server. This way we don't have to any network handling, all is all handled by the cloud provider. But that will require a bunch of configuration & client side handling so skipping for now.
+
+    We can utilise background processing on the server side to handle processing of large csv files. Once upload is completed, we trigger a background task and immediately return the response to the user with status message along with `task_id` which can be used to fetch the status of the job
