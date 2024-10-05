@@ -1,13 +1,15 @@
-from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks
+from fastapi import APIRouter, Depends, File, UploadFile, BackgroundTasks, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from datetime import datetime
+from typing import Optional, List
 import tempfile
 import csv
 import os
 
 from database import get_db
 from services.movie_service import MovieService
+from schemas.movie_schema import MovieSchema
 from services.task_manager_service import TaskManagerService 
 from repositories.movie_repository import MovieRepository
 
@@ -55,6 +57,8 @@ def process_csv(file_path: str, task_id: str, db: Session):
                 # print(row)
                 count += 1
                 repository.create_movie(row)
+                if count > 100:
+                    break
 
             print(f'Processed {count} rows')
         task_manager.update_status(task_id, "completed", datetime.now().isoformat())
@@ -64,4 +68,24 @@ def process_csv(file_path: str, task_id: str, db: Session):
     finally:
         # Clean up the temporary file
         os.unlink(file_path)
-    
+
+@router.get("/movies", response_model=List[MovieSchema]) 
+def get_movies(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    per_page: int = Query(10, ge=1, le=100),
+    year: Optional[int] = Query(None),
+    language: Optional[str] = Query(None),
+    sort_by: Optional[str] = Query('release_date', regex="^(release_date|vote_average)$"),
+    sort_order: Optional[str] = Query('asc', regex="^(asc|desc)$"),
+):
+    movie_repo = MovieRepository(db)
+    movies = movie_repo.get_movies(
+        page=page,
+        per_page=per_page,
+        year=year,
+        language=language,
+        sort_by=sort_by,
+        sort_order=sort_order
+    )
+    return movies
