@@ -39,3 +39,8 @@ For scope of this project sticking with SQLite, while both MySQL & PostgreSQL ar
     One of the popular approach is to do client side handling to directly push the file to a cloud bucket(GCS, S3) and share the pre-signed url with server. This way we don't have to any network handling, all is all handled by the cloud provider. But that will require a bunch of configuration & client side handling so skipping for now.
 
     We can utilise background processing on the server side to handle processing of large csv files. Once upload is completed, we trigger a background task and immediately return the response to the user with status message along with `task_id` which can be used to fetch the status of the job
+
+2. DB Setup : 
+
+    Now let's setup & initialise DB. For schema I'm thinking of using the csv header as it is. Later might come back and rethink about optimisation.
+    ToDo : Revisit the DB schema design.
