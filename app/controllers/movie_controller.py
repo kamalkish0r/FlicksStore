@@ -6,15 +6,19 @@ from typing import Optional, List
 from database import get_db
 from services.movie_service import MovieService
 from schemas.movie_schema import MovieSchema
-from services.task_manager_service import TaskManagerService 
+from services.task_manager_service import TaskManagerService, get_task_manager_service
 from repositories.movie_repository import MovieRepository
 
 router = APIRouter()
-task_manager = TaskManagerService()
 
 @router.post("/upload-csv/")
-async def upload_csv(background_tasks: BackgroundTasks, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    task_id = task_manager.create_task()  # Create a new task
+async def upload_csv(
+    background_tasks: BackgroundTasks, 
+    file: UploadFile = File(...), 
+    db: Session = Depends(get_db),
+    task_manager: TaskManagerService = Depends(get_task_manager_service)
+):
+    task_id = task_manager.create_task() 
     movie_service = MovieService(db, task_manager)
     try:
         file_path = movie_service.save_file(file)
@@ -30,8 +34,11 @@ async def upload_csv(background_tasks: BackgroundTasks, file: UploadFile = File(
     
 
 @router.get("/upload-status/{task_id}")
-async def get_upload_status(task_id: str):
-    status_info = task_manager.get_status(task_id)  # Use the task manager to get status
+async def get_upload_status(
+    task_id: str, 
+    task_manager: TaskManagerService = Depends(get_task_manager_service)
+):
+    status_info = task_manager.get_status(task_id) 
     return {"task_id": task_id, "status_info": status_info}
 
 

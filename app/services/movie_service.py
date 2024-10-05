@@ -3,17 +3,16 @@ import os
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
 from datetime import datetime
-from io import StringIO
 import tempfile
 
 from repositories.movie_repository import MovieRepository
-from services.task_manager_service import TaskManagerService  # Import the task manager
+from services.task_manager_service import TaskManagerService  
 
 class MovieService:
     def __init__(self, db: Session, task_manager: TaskManagerService):
         self.db = db
         self.repository = MovieRepository(db)
-        self.task_manager = task_manager  # Use the task manager service
+        self.task_manager = task_manager  
 
     def save_file(self, file: UploadFile):
          try:
@@ -34,8 +33,8 @@ class MovieService:
                 for row in csv_reader:
                     count += 1
                     self.repository.create_movie(row)
-                    if count > 10:
-                        break
+                    # if count > 10:
+                    #     break
 
                 print(f'Processed {count} rows')
 
